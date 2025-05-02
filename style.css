@@ -1,0 +1,65 @@
+/* Mobile-first layout */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100vh;
+    width: 100vw;
+    font-family: sans-serif;
+    background: #111;
+    color: #fff;
+  }
+  
+  main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  button.card {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  button.card.active {
+    background: #2ecc71;
+  }
+  
+  .result {
+    background: #222;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  

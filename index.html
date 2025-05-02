@@ -1,11 +1,31 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Mon site en ligne</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blackjack Coach</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Bienvenue sur mon site via GitHub Pages !</h1>
+  <main>
+    <h1>🃏 Coach Blackjack</h1>
+
+    <section class="hand">
+      <h2>Ta main</h2>
+      <div id="player-cards" class="card-grid"></div>
+    </section>
+
+    <section class="dealer">
+      <h2>Carte du croupier</h2>
+      <div id="dealer-cards" class="card-grid"></div>
+    </section>
+
+    <section class="result">
+      <h2>Conseil :</h2>
+      <div id="advice">Sélectionne 2 cartes + celle du croupier</div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
