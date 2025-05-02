@@ -1,96 +1,104 @@
-const cards = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-let selectedPlayer = [];
-let selectedDealer = null;
+// Variables globales pour les cartes sélectionnées
+let cartesJoueur = [];
+let carteCroupier = '';
 
-function createCardButtons(containerId, isPlayer = true) {
-  const container = document.getElementById(containerId);
-  cards.forEach(card => {
-    const btn = document.createElement('button');
-    btn.textContent = card;
-    btn.classList.add('card');
-    btn.addEventListener('click', () => {
-      if (isPlayer) {
-        if (selectedPlayer.includes(card)) return;
-        selectedPlayer.push(card);
-        btn.classList.add('active');
-        if (selectedPlayer.length > 2) {
-          // Reset
-          selectedPlayer = [card];
-          document.querySelectorAll('#player-cards .card').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        }
-      } else {
-        selectedDealer = card;
-        document.querySelectorAll('#dealer-cards .card').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-      updateAdvice();
-    });
-    container.appendChild(btn);
+// Fonction pour créer les boutons de carte
+function creerBoutonsCartes() {
+  const cartes = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+  const conteneurCartes = document.getElementById('cartes-joueur');
+
+  cartes.forEach(carte => {
+    const bouton = document.createElement('button');
+    bouton.textContent = carte;
+    bouton.classList.add('carte');
+    bouton.addEventListener('click', () => selectionnerCarte(carte, bouton));
+    conteneurCartes.appendChild(bouton);
   });
 }
 
-function getValue(card) {
-  if (['J','Q','K'].includes(card)) return 10;
-  if (card === 'A') return 11;
-  return parseInt(card);
-}
-
-function updateAdvice() {
-  const adviceDiv = document.getElementById('advice');
-  if (selectedPlayer.length < 2 || !selectedDealer) {
-    adviceDiv.textContent = 'Sélectionne 2 cartes + celle du croupier';
-    return;
-  }
-
-  const c1 = selectedPlayer[0];
-  const c2 = selectedPlayer[1];
-  const dealerCard = selectedDealer;
-
-  // Split case
-  if (c1 === c2) {
-    if (c1 === 'A' || getValue(c1) === 8) {
-      adviceDiv.textContent = '🔵 Split';
-      return;
-    } else if (getValue(c1) === 10) {
-      adviceDiv.textContent = '🟡 Stand';
-      return;
-    }
-  }
-
-  // Soft hands (with Ace)
-  const hasAce = c1 === 'A' || c2 === 'A';
-  const total = getValue(c1) + getValue(c2);
-  const dealerValue = getValue(dealerCard);
-
-  if (hasAce && total <= 21) {
-    if (total <= 17) {
-      adviceDiv.textContent = '🟢 Hit';
-    } else if (total === 18) {
-      adviceDiv.textContent = dealerValue >= 9 ? '🟢 Hit' : '🟡 Stand';
-    } else {
-      adviceDiv.textContent = '🟡 Stand';
-    }
-    return;
-  }
-
-  // Hard hands
-  if (total <= 8) {
-    adviceDiv.textContent = '🟢 Hit';
-  } else if (total === 9) {
-    adviceDiv.textContent = dealerValue >= 3 && dealerValue <= 6 ? '🔴 Double' : '🟢 Hit';
-  } else if (total === 10) {
-    adviceDiv.textContent = dealerValue <= 9 ? '🔴 Double' : '🟢 Hit';
-  } else if (total === 11) {
-    adviceDiv.textContent = '🔴 Double';
-  } else if (total === 12) {
-    adviceDiv.textContent = dealerValue >= 4 && dealerValue <= 6 ? '🟡 Stand' : '🟢 Hit';
-  } else if (total >= 13 && total <= 16) {
-    adviceDiv.textContent = dealerValue <= 6 ? '🟡 Stand' : '🟢 Hit';
+// Fonction de sélection des cartes par le joueur
+function selectionnerCarte(carte, bouton) {
+  // Si la carte est déjà sélectionnée, on l'annule
+  if (cartesJoueur.length < 2) {
+    cartesJoueur.push(carte);
+    bouton.classList.add('active');
   } else {
-    adviceDiv.textContent = '🟡 Stand';
+    // Si deux cartes ont été sélectionnées, on réinitialise la sélection
+    cartesJoueur = [carte];
+    document.querySelectorAll('#cartes-joueur .carte').forEach(b => b.classList.remove('active'));
+    bouton.classList.add('active');
+  }
+
+  afficherStratégie();
+}
+
+// Calculer la somme des cartes, en prenant en compte l'As
+function calculerSomme(cartes) {
+  let somme = 0;
+  let asPresent = false;
+
+  cartes.forEach(carte => {
+    if (carte === 'J' || carte === 'Q' || carte === 'K') {
+      somme += 10;
+    } else if (carte === 'A') {
+      asPresent = true;
+      somme += 11;
+    } else {
+      somme += parseInt(carte);
+    }
+  });
+
+  // Si la somme est supérieure à 21 et qu'il y a un As, on compte l'As comme 1
+  if (somme > 21 && asPresent) {
+    somme -= 10;
+  }
+
+  return somme;
+}
+
+// Afficher la stratégie du Blackjack
+function afficherStratégie() {
+  const stratégie = document.getElementById('stratégie');
+  stratégie.innerHTML = ''; // Réinitialiser l'affichage
+
+  if (cartesJoueur.length === 2) {
+    const sommeJoueur = calculerSomme(cartesJoueur);
+
+    // Règles de la stratégie (simplifiées)
+    if (sommeJoueur === 21) {
+      stratégie.textContent = 'Vous avez un Blackjack!';
+    } else if (cartesJoueur[0] === cartesJoueur[1]) {
+      stratégie.textContent = 'Vous pouvez splitter.';
+    } else if (sommeJoueur >= 10) {
+      stratégie.textContent = 'Doubler est recommandé.';
+    } else {
+      stratégie.textContent = 'Tirer une carte est conseillé.';
+    }
   }
 }
 
-createCardButtons('player-cards', true);
-createCardButtons('dealer-cards', false);
+// Lancer le jeu lorsque l'utilisateur a sélectionné ses cartes
+function lancerJeu() {
+  // Exemple de logique de jeu (simplifiée)
+  carteCroupier = '10'; // Valeur par défaut du croupier
+
+  if (cartesJoueur.length === 2) {
+    afficherRésultat();
+  }
+}
+
+// Affichage du résultat de la stratégie
+function afficherRésultat() {
+  const résultat = document.getElementById('résultat');
+  const sommeJoueur = calculerSomme(cartesJoueur);
+
+  let action = 'Tirer';
+  if (sommeJoueur >= 17) {
+    action = 'Rester';
+  }
+
+  résultat.textContent = `Stratégie : ${action}`;
+}
+
+// Appeler la fonction pour créer les boutons de cartes
+creerBoutonsCartes();
