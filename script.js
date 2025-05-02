@@ -47,13 +47,13 @@ function updateAdvice() {
   const c2 = selectedPlayer[1];
   const dealerCard = selectedDealer;
 
-  // Split case
+  // Diviser case
   if (c1 === c2) {
     if (c1 === 'A' || getValue(c1) === 8) {
-      adviceDiv.textContent = '🔵 Split';
+      adviceDiv.textContent = '🔵 Diviser';
       return;
     } else if (getValue(c1) === 10) {
-      adviceDiv.textContent = '🟡 Stand';
+      adviceDiv.textContent = '🟡 Rester';
       return;
     }
   }
@@ -65,30 +65,30 @@ function updateAdvice() {
 
   if (hasAce && total <= 21) {
     if (total <= 17) {
-      adviceDiv.textContent = '🟢 Hit';
+      adviceDiv.textContent = '🟢 Tirer';
     } else if (total === 18) {
-      adviceDiv.textContent = dealerValue >= 9 ? '🟢 Hit' : '🟡 Stand';
+      adviceDiv.textContent = dealerValue >= 9 ? '🟢 Tirer' : '🟡 Rester';
     } else {
-      adviceDiv.textContent = '🟡 Stand';
+      adviceDiv.textContent = '🟡 Rester';
     }
     return;
   }
 
   // Hard hands
   if (total <= 8) {
-    adviceDiv.textContent = '🟢 Hit';
+    adviceDiv.textContent = '🟢 Tirer';
   } else if (total === 9) {
-    adviceDiv.textContent = dealerValue >= 3 && dealerValue <= 6 ? '🔴 Double' : '🟢 Hit';
+    adviceDiv.textContent = dealerValue >= 3 && dealerValue <= 6 ? '🔴 Doubler' : '🟢 Tirer';
   } else if (total === 10) {
-    adviceDiv.textContent = dealerValue <= 9 ? '🔴 Double' : '🟢 Hit';
+    adviceDiv.textContent = dealerValue <= 9 ? '🔴 Doubler' : '🟢 Tirer';
   } else if (total === 11) {
-    adviceDiv.textContent = '🔴 Double';
+    adviceDiv.textContent = '🔴 Doubler';
   } else if (total === 12) {
-    adviceDiv.textContent = dealerValue >= 4 && dealerValue <= 6 ? '🟡 Stand' : '🟢 Hit';
+    adviceDiv.textContent = dealerValue >= 4 && dealerValue <= 6 ? '🟡 Rester' : '🟢 Tirer';
   } else if (total >= 13 && total <= 16) {
-    adviceDiv.textContent = dealerValue <= 6 ? '🟡 Stand' : '🟢 Hit';
+    adviceDiv.textContent = dealerValue <= 6 ? '🟡 Rester' : '🟢 Tirer';
   } else {
-    adviceDiv.textContent = '🟡 Stand';
+    adviceDiv.textContent = '🟡 Rester';
   }
 }
 
