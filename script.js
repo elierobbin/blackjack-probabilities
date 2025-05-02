@@ -10,14 +10,12 @@ function createCardButtons(containerId, isPlayer = true) {
     btn.classList.add('card');
     btn.addEventListener('click', () => {
       if (isPlayer) {
-        // Permettre de sélectionner deux fois la même carte
         selectedPlayer.push(card); // Ajouter la carte à la main du joueur
-        btn.classList.add('active'); // Marquer la carte comme sélectionnée
-        // Si plus de 2 cartes sont sélectionnées, on réinitialise pour recommencer
+        btn.classList.add('active');
         if (selectedPlayer.length > 2) {
           selectedPlayer = [card]; // Réinitialisation pour recommencer avec la dernière carte
-          document.querySelectorAll('#player-cards .card').forEach(b => b.classList.remove('active')); // Réinitialiser l'affichage
-          btn.classList.add('active'); // Ajouter la carte sélectionnée
+          document.querySelectorAll('#player-cards .card').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
         }
       } else {
         selectedDealer = card;
@@ -47,48 +45,52 @@ function updateAdvice() {
   const c2 = selectedPlayer[1];
   const dealerCard = selectedDealer;
 
-  // Diviser case
+  // Cas de Split
   if (c1 === c2) {
-    if (c1 === 'A' || getValue(c1) === 8) {
-      adviceDiv.textContent = '🔵 Diviser';
+    // Si le joueur a deux As et que le croupier a aussi un As, on recommande de tirer
+    if (c1 === 'A' && dealerCard !== 'A') {
+      adviceDiv.textContent = '🔵 Diviser (Split)';
+      return;
+    } else if (c1 === 'A' || getValue(c1) === 8) {
+      adviceDiv.textContent = '🔵 Diviser (Split)';
       return;
     } else if (getValue(c1) === 10) {
-      adviceDiv.textContent = '🟡 Rester';
+      adviceDiv.textContent = '🟡 Rester (Stand)';
       return;
     }
   }
 
-  // Soft hands (with Ace)
+  // Main douce (avec un As)
   const hasAce = c1 === 'A' || c2 === 'A';
   const total = getValue(c1) + getValue(c2);
   const dealerValue = getValue(dealerCard);
 
   if (hasAce && total <= 21) {
     if (total <= 17) {
-      adviceDiv.textContent = '🟢 Tirer';
+      adviceDiv.textContent = '🟢 Tirer (Hit)';
     } else if (total === 18) {
-      adviceDiv.textContent = dealerValue >= 9 ? '🟢 Tirer' : '🟡 Rester';
+      adviceDiv.textContent = dealerValue >= 9 ? '🟢 Tirer (Hit)' : '🟡 Rester (Stand)';
     } else {
-      adviceDiv.textContent = '🟡 Rester';
+      adviceDiv.textContent = '🟡 Rester (Stand)';
     }
     return;
   }
 
-  // Hard hands
+  // Main dure
   if (total <= 8) {
-    adviceDiv.textContent = '🟢 Tirer';
+    adviceDiv.textContent = '🟢 Tirer (Hit)';
   } else if (total === 9) {
-    adviceDiv.textContent = dealerValue >= 3 && dealerValue <= 6 ? '🔴 Doubler' : '🟢 Tirer';
+    adviceDiv.textContent = dealerValue >= 3 && dealerValue <= 6 ? '🔴 Doubler (Double)' : '🟢 Tirer (Hit)';
   } else if (total === 10) {
-    adviceDiv.textContent = dealerValue <= 9 ? '🔴 Doubler' : '🟢 Tirer';
+    adviceDiv.textContent = dealerValue <= 9 ? '🔴 Doubler (Double)' : '🟢 Tirer (Hit)';
   } else if (total === 11) {
-    adviceDiv.textContent = '🔴 Doubler';
+    adviceDiv.textContent = '🔴 Doubler (Double)';
   } else if (total === 12) {
-    adviceDiv.textContent = dealerValue >= 4 && dealerValue <= 6 ? '🟡 Rester' : '🟢 Tirer';
+    adviceDiv.textContent = dealerValue >= 4 && dealerValue <= 6 ? '🟡 Rester (Stand)' : '🟢 Tirer (Hit)';
   } else if (total >= 13 && total <= 16) {
-    adviceDiv.textContent = dealerValue <= 6 ? '🟡 Rester' : '🟢 Tirer';
+    adviceDiv.textContent = dealerValue <= 6 ? '🟡 Rester (Stand)' : '🟢 Tirer (Hit)';
   } else {
-    adviceDiv.textContent = '🟡 Rester';
+    adviceDiv.textContent = '🟡 Rester (Stand)';
   }
 }
 
